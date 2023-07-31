@@ -4,13 +4,9 @@ pragma solidity ^0.8.19;
 import {UUPSUpgradeable} from "../lib/openzeppelin-contracts-upgradeable/contracts/proxy/utils/UUPSUpgradeable.sol";
 import {OwnableUpgradeable} from "../lib/openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 
-contract ChangeVariableOrder_V1 is UUPSUpgradeable, OwnableUpgradeable {
+contract ChangeVariableOrder_V2 is UUPSUpgradeable, OwnableUpgradeable {
+    uint256 public slotShifter; // Adding this variable shifts the storage slot of `number` in the proxy
     uint256 public number;
-
-    function initialize() public virtual initializer {
-        __Ownable_init();
-        __UUPSUpgradeable_init();
-    }
 
     function setNumber(uint256 newNumber) public {
         number = newNumber;
