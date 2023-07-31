@@ -1,66 +1,57 @@
-## Foundry
+## Solidity Upgrade Sandbox
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
-
-Foundry consists of:
-
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
-
-## Documentation
-
-https://book.getfoundry.sh/
+A sandbox repository for setting up and testing Solidity upgrade scenarios using Foundry.
 
 ## Usage
-
-### Build
-
-```shell
-$ forge build
-```
 
 ### Test
 
 ```shell
+# All tests
 $ forge test
+
+# Specific contract
+$ forge test -vv  --mc ChangeVariableOrder_V2
 ```
 
-### Format
+## Scenarios
 
-```shell
-$ forge fmt
+### Change Variable Order
+
+```solidity
+contract ChangeVariableOrder_V1 is UUPSUpgradeable, OwnableUpgradeable {
+    uint256 public number;
+
+    /* ... */
+}
+
+contract ChangeVariableOrder_V2 is UUPSUpgradeable, OwnableUpgradeable {
+    uint256 public slotShifter; // Adding this variable shifts the storage slot of `number` in the proxy
+    uint256 public number;
+
+    /* ... */
+}
 ```
 
-### Gas Snapshots
+Test Results:
 
-```shell
-$ forge snapshot
-```
+```bash
+[FAIL. Reason: Assertion failed.] testCurrentNumber() (gas: 26989)
+Logs:
+  Error: a == b not satisfied [uint]
+        Left: 0
+       Right: 99
 
-### Anvil
+[FAIL. Reason: Assertion failed.] testIncrement() (gas: 48247)
+Logs:
+  Error: a == b not satisfied [uint]
+        Left: 1
+       Right: 100
 
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
+[PASS] testSetNumber(uint256) (runs: 256, μ: 32790, ~: 33723)
+[FAIL. Reason: Assertion failed.] testSlotStorage() (gas: 26966)
+Logs:
+  Error: a == b not satisfied [uint]
+        Left: 99
+       Right: 0
 ```
