@@ -26,7 +26,8 @@ contract ChangeVariableOrder_V2_Test is ChangeVariableOrder_V1_Test {
         assertEq(v2.slotShifter(), 0);
     }
 
-    // ❌ This will fail! The `number` variable is now in a new storage slot and therefore reset to the default value of 0.
+    // ❌ This will fail!
+    // The `number` variable is now in a new storage slot and therefore reset to the default value of 0.
     function testCurrentNumber() public {
         assertEq(v2.number(), 99);
     }
